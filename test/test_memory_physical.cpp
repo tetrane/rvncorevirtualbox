@@ -35,7 +35,7 @@ private:
 
 struct MemoryFixture {
 	// 1024 bytes
-	MemoryFixture() : memory_(REVEN_TEST_DATA "/binaries/testMemoryPhysical.bin") {}
+	MemoryFixture() : memory_(TEST_DATA "/testMemoryPhysical.bin") {}
 
 	void checkRead(std::uint64_t offset, std::uint8_t reference)
 	{

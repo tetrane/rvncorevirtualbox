@@ -8,7 +8,7 @@
 struct int80_core : public reven::vmghost::core_virtualbox {
 	int80_core()
 	{
-		static const std::string core_path = REVEN_TEST_DATA "/scenarios/int80_nop_int80_nop_x86/int80_nop_int80_nop_x86.core";
+		static const std::string core_path = TEST_DATA "/int80_nop_int80_nop_x86/int80_nop_int80_nop_x86.core";
 
 		parse(core_path);
 	}
