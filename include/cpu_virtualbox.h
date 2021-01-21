@@ -240,6 +240,9 @@ public:
 	std::uint64_t msrKernelGSBase() const;
 	std::uint64_t msrApicBase() const;
 
+	//! Throws: RuntimeError on v5 cores
+	std::uint64_t msrTscAux() const;
+
 private:
 	std::uint16_t fpu_rebuild_tag_word() const;
 

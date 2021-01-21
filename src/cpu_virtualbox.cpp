@@ -2,6 +2,8 @@
 
 #include <cstring>
 
+#include <stdexcept>
+
 namespace reven {
 namespace vmghost {
 
@@ -565,6 +567,14 @@ std::uint64_t cpu_virtualbox::msrApicBase() const
 {
 	return (context_.base.msrApicBase);
 }
+
+std::uint64_t cpu_virtualbox::msrTscAux() const
+{
+	if (version_ == vbox::DBGFCORE_FMT_VERSIONv6) {
+	    return (context_.v6.msrTscAux);
+	} else {
+		throw std::runtime_error("Attempt to access msrTscAux from an old version");
+	}
 }
 }
 } // namespace reven::vmghost
