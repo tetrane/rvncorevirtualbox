@@ -45,6 +45,14 @@ std::uint16_t fpu_restore_tag(const vbox::X86FXSTATE* pFpu, unsigned int iReg)
 
 } // anonymous-namespace
 
+const vbox::X86XSAVEAREA& cpu_virtualbox::ext() const {
+	if (version_ == vbox::DBGFCORE_FMT_VERSIONv6) {
+		return context_.v6.ext;
+	} else {
+		return context_.v5.ext;
+	}
+}
+
 std::uint16_t cpu_virtualbox::fpu_rebuild_tag_word() const
 {
 	auto pFpu = &(context_.ext.x87);

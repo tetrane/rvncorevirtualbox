@@ -243,6 +243,8 @@ public:
 private:
 	std::uint16_t fpu_rebuild_tag_word() const;
 
+	const vbox::X86XSAVEAREA& ext() const;
+
 	std::uint32_t version_;
 	vbox::DBGFCORECPU context_;
 	tetrane_cpu_info tetrane_context_;
