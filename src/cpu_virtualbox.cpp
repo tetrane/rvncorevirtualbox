@@ -55,7 +55,7 @@ const vbox::X86XSAVEAREA& cpu_virtualbox::ext() const {
 
 std::uint16_t cpu_virtualbox::fpu_rebuild_tag_word() const
 {
-	auto pFpu = &(context_.ext.x87);
+	auto pFpu = &(ext().x87);
 
 	return fpu_restore_tag(pFpu, 0) | (fpu_restore_tag(pFpu, 1) << 2) | (fpu_restore_tag(pFpu, 2) << 4) |
 	       (fpu_restore_tag(pFpu, 3) << 6) | (fpu_restore_tag(pFpu, 4) << 8) | (fpu_restore_tag(pFpu, 5) << 10) |
@@ -66,16 +66,16 @@ long double cpu_virtualbox::fpu_register(std::uint8_t r_index) const
 {
 	long double result = 0.0;
 	auto st_index = (r_index + 8 - fpu_top()) & 0x7;
-	::memcpy(&result, context_.ext.x87.aRegs[st_index].au8, sizeof(long double));
+	::memcpy(&result, ext().x87.aRegs[st_index].au8, sizeof(long double));
 	return result;
 }
 
 std::uint16_t cpu_virtualbox::fpu_status_word() const {
-	return context_.ext.x87.FSW;
+	return ext().x87.FSW;
 }
 std::uint16_t cpu_virtualbox::fpu_control_word() const
 {
-	return context_.ext.x87.FCW;
+	return ext().x87.FCW;
 }
 std::uint16_t cpu_virtualbox::fpu_tag_word() const
 {
@@ -83,195 +83,195 @@ std::uint16_t cpu_virtualbox::fpu_tag_word() const
 }
 std::uint8_t cpu_virtualbox::fpu_abridged_tags() const
 {
-	return context_.ext.x87.FTW;
+	return ext().x87.FTW;
 }
 std::uint8_t cpu_virtualbox::fpu_ie() const
 {
-	return (context_.ext.x87.FSW & 1);
+	return (ext().x87.FSW & 1);
 }
 std::uint8_t cpu_virtualbox::fpu_de() const
 {
-	return (context_.ext.x87.FSW >> 1) & 1;
+	return (ext().x87.FSW >> 1) & 1;
 }
 std::uint8_t cpu_virtualbox::fpu_ze() const
 {
-	return (context_.ext.x87.FSW >> 2) & 1;
+	return (ext().x87.FSW >> 2) & 1;
 }
 std::uint8_t cpu_virtualbox::fpu_oe() const
 {
-	return (context_.ext.x87.FSW >> 3) & 1;
+	return (ext().x87.FSW >> 3) & 1;
 }
 std::uint8_t cpu_virtualbox::fpu_ue() const
 {
-	return (context_.ext.x87.FSW >> 4) & 1;
+	return (ext().x87.FSW >> 4) & 1;
 }
 std::uint8_t cpu_virtualbox::fpu_pe() const
 {
-	return (context_.ext.x87.FSW >> 5) & 1;
+	return (ext().x87.FSW >> 5) & 1;
 }
 std::uint8_t cpu_virtualbox::fpu_sf() const
 {
-	return (context_.ext.x87.FSW >> 6) & 1;
+	return (ext().x87.FSW >> 6) & 1;
 }
 std::uint8_t cpu_virtualbox::fpu_es() const
 {
-	return (context_.ext.x87.FSW >> 7) & 1;
+	return (ext().x87.FSW >> 7) & 1;
 }
 bool cpu_virtualbox::fpu_c0() const
 {
-	return (context_.ext.x87.FSW >> 8) & 1;
+	return (ext().x87.FSW >> 8) & 1;
 }
 bool cpu_virtualbox::fpu_c1() const
 {
-	return (context_.ext.x87.FSW >> 9) & 1;
+	return (ext().x87.FSW >> 9) & 1;
 }
 bool cpu_virtualbox::fpu_c2() const
 {
-	return (context_.ext.x87.FSW >> 10) & 1;
+	return (ext().x87.FSW >> 10) & 1;
 }
 std::uint8_t cpu_virtualbox::fpu_top() const
 {
-	return (context_.ext.x87.FSW >> 11) & 7;
+	return (ext().x87.FSW >> 11) & 7;
 }
 bool cpu_virtualbox::fpu_c3() const
 {
-	return (context_.ext.x87.FSW >> 14) & 1;
+	return (ext().x87.FSW >> 14) & 1;
 }
 std::uint8_t cpu_virtualbox::fpu_busy() const
 {
-	return (context_.ext.x87.FSW >> 15) & 1;
+	return (ext().x87.FSW >> 15) & 1;
 }
 
 std::uint16_t cpu_virtualbox::fpu_fop() const
 {
-	return context_.ext.x87.FOP;
+	return ext().x87.FOP;
 }
 std::uint32_t cpu_virtualbox::fpu_ip() const
 {
-	return context_.ext.x87.FPUIP;
+	return ext().x87.FPUIP;
 }
 std::uint16_t cpu_virtualbox::fpu_cs() const
 {
-	return context_.ext.x87.CS;
+	return ext().x87.CS;
 }
 std::uint32_t cpu_virtualbox::fpu_dp() const
 {
-	return context_.ext.x87.FPUDP;
+	return ext().x87.FPUDP;
 }
 std::uint16_t cpu_virtualbox::fpu_ds() const
 {
-	return context_.ext.x87.DS;
+	return ext().x87.DS;
 }
 
 std::uint32_t cpu_virtualbox::partial_sse_register(std::uint8_t index, std::uint8_t part_index) const
 {
-	return context_.ext.x87.aXMM[index].au32[part_index];
+	return ext().x87.aXMM[index].au32[part_index];
 }
 
 std::uint32_t cpu_virtualbox::mxcsr() const {
-	return (context_.ext.x87.MXCSR);
+	return (ext().x87.MXCSR);
 }
 std::uint32_t cpu_virtualbox::mxcsr_mask() const {
-	return (context_.ext.x87.MXCSR_MASK);
+	return (ext().x87.MXCSR_MASK);
 }
 
 std::uint8_t cpu_virtualbox::mxcsr_ie() const
 {
-	return (context_.ext.x87.MXCSR & 1);
+	return (ext().x87.MXCSR & 1);
 }
 std::uint8_t cpu_virtualbox::mxcsr_de() const
 {
-	return (context_.ext.x87.MXCSR >> 1) & 1;
+	return (ext().x87.MXCSR >> 1) & 1;
 }
 std::uint8_t cpu_virtualbox::mxcsr_ze() const
 {
-	return (context_.ext.x87.MXCSR >> 2) & 1;
+	return (ext().x87.MXCSR >> 2) & 1;
 }
 std::uint8_t cpu_virtualbox::mxcsr_oe() const
 {
-	return (context_.ext.x87.MXCSR >> 3) & 1;
+	return (ext().x87.MXCSR >> 3) & 1;
 }
 std::uint8_t cpu_virtualbox::mxcsr_ue() const
 {
-	return (context_.ext.x87.MXCSR >> 4) & 1;
+	return (ext().x87.MXCSR >> 4) & 1;
 }
 std::uint8_t cpu_virtualbox::mxcsr_pe() const
 {
-	return (context_.ext.x87.MXCSR >> 5) & 1;
+	return (ext().x87.MXCSR >> 5) & 1;
 }
 std::uint8_t cpu_virtualbox::mxcsr_daz() const
 {
-	return (context_.ext.x87.MXCSR >> 6) & 1;
+	return (ext().x87.MXCSR >> 6) & 1;
 }
 std::uint8_t cpu_virtualbox::mxcsr_im() const
 {
-	return (context_.ext.x87.MXCSR >> 7) & 1;
+	return (ext().x87.MXCSR >> 7) & 1;
 }
 std::uint8_t cpu_virtualbox::mxcsr_dm() const
 {
-	return (context_.ext.x87.MXCSR >> 8) & 1;
+	return (ext().x87.MXCSR >> 8) & 1;
 }
 std::uint8_t cpu_virtualbox::mxcsr_zm() const
 {
-	return (context_.ext.x87.MXCSR >> 9) & 1;
+	return (ext().x87.MXCSR >> 9) & 1;
 }
 std::uint8_t cpu_virtualbox::mxcsr_om() const
 {
-	return (context_.ext.x87.MXCSR >> 10) & 1;
+	return (ext().x87.MXCSR >> 10) & 1;
 }
 std::uint8_t cpu_virtualbox::mxcsr_um() const
 {
-	return (context_.ext.x87.MXCSR >> 11) & 1;
+	return (ext().x87.MXCSR >> 11) & 1;
 }
 std::uint8_t cpu_virtualbox::mxcsr_pm() const
 {
-	return (context_.ext.x87.MXCSR >> 12) & 1;
+	return (ext().x87.MXCSR >> 12) & 1;
 }
 std::uint8_t cpu_virtualbox::mxcsr_rc() const
 {
-	return (context_.ext.x87.MXCSR >> 13) & 3;
+	return (ext().x87.MXCSR >> 13) & 3;
 }
 std::uint8_t cpu_virtualbox::mxcsr_fz() const
 {
-	return (context_.ext.x87.MXCSR >> 15) & 1;
+	return (ext().x87.MXCSR >> 15) & 1;
 }
 std::uint8_t cpu_virtualbox::mxcsr_mm() const
 {
-	return (context_.ext.x87.MXCSR >> 17) & 1;
+	return (ext().x87.MXCSR >> 17) & 1;
 }
 
 std::uint64_t cpu_virtualbox::rflags() const {
-	return (context_.rflags);
+	return (context_.base.rflags);
 }
 
 //! @return Set if an arithmetic operation generates a carry or a borrow out of the most significant bit of the result.
 bool cpu_virtualbox::carry_flag() const
 {
-	return (context_.rflags) & 1;
+	return (context_.base.rflags) & 1;
 }
 
 //! @return Set if the least significant byte of the result contains an even number of 1 bits.
 bool cpu_virtualbox::parity_flag() const
 {
-	return (context_.rflags) & (1 << 2);
+	return (context_.base.rflags) & (1 << 2);
 }
 
 //! @return Set if an arithmetic operation generates a carry or a borrow out of bit 3 of the result.
 bool cpu_virtualbox::adjust_flag() const
 {
-	return (context_.rflags) & (1 << 4);
+	return (context_.base.rflags) & (1 << 4);
 }
 
 //! @return Set if the result is zero.
 bool cpu_virtualbox::zero_flag() const
 {
-	return (context_.rflags) & (1 << 6);
+	return (context_.base.rflags) & (1 << 6);
 }
 
 //! @return Set equal to the most-significant bit of the result, which is the sign bit of a signed integer.
 bool cpu_virtualbox::sign_flag() const
 {
-	return (context_.rflags) & (1 << 7);
+	return (context_.base.rflags) & (1 << 7);
 }
 
 //! @return Set if the integer result is too large a positive number of too small a negative number (excluding the
@@ -279,138 +279,138 @@ bool cpu_virtualbox::sign_flag() const
 //!   to fit in the destination operand.
 bool cpu_virtualbox::overflow_flag() const
 {
-	return (context_.rflags) & (1 << 11);
+	return (context_.base.rflags) & (1 << 11);
 }
 
 bool cpu_virtualbox::directional_flag() const
 {
-	return (context_.rflags) & (1 << 10);
+	return (context_.base.rflags) & (1 << 10);
 }
 bool cpu_virtualbox::resume_flag() const
 {
-	return (context_.rflags) & (1 << 16);
+	return (context_.base.rflags) & (1 << 16);
 }
 bool cpu_virtualbox::trap_flag() const
 {
-	return (context_.rflags) & (1 << 8);
+	return (context_.base.rflags) & (1 << 8);
 }
 bool cpu_virtualbox::interrupt_flag() const
 {
-	return (context_.rflags) & (1 << 9);
+	return (context_.base.rflags) & (1 << 9);
 }
 bool cpu_virtualbox::cpuid_flag() const
 {
-	return (context_.rflags) & (1 << 21);
+	return (context_.base.rflags) & (1 << 21);
 }
 bool cpu_virtualbox::iopl_flag() const
 {
-	return (context_.rflags) & (3 << 12);
+	return (context_.base.rflags) & (3 << 12);
 }
 
 bool cpu_virtualbox::eflag_reserved_bit1() const
 {
-	return (context_.rflags) & (1 << 1);
+	return (context_.base.rflags) & (1 << 1);
 }
 
 bool cpu_virtualbox::is_paging_enabled() const
 {
-	return context_.cr0 & 0x80000000;
+	return context_.base.cr0 & 0x80000000;
 }
 bool cpu_virtualbox::is_pae_enabled() const
 {
-	return is_paging_enabled() && (context_.cr4 & 0x00000020);
+	return is_paging_enabled() && (context_.base.cr4 & 0x00000020);
 }
 bool cpu_virtualbox::is_pse_enabled() const
 {
-	return (context_.cr4 & 0x00000010);
+	return (context_.base.cr4 & 0x00000010);
 }
 bool cpu_virtualbox::is_smep_enabled() const
 {
-	return (context_.cr4 & 0x100000);
+	return (context_.base.cr4 & 0x100000);
 }
 bool cpu_virtualbox::is_pse36_enabled() const
 {
-	return (context_.rdx & 0x20000);
+	return (context_.base.rdx & 0x20000);
 }
 bool cpu_virtualbox::is_nx_enabled() const
 {
-	return (context_.msrEFER & 0x800);
+	return (context_.base.msrEFER & 0x800);
 }
 
 std::uint64_t cpu_virtualbox::rax() const
 {
-	return context_.rax;
+	return context_.base.rax;
 }
 std::uint64_t cpu_virtualbox::rbx() const
 {
-	return context_.rbx;
+	return context_.base.rbx;
 }
 std::uint64_t cpu_virtualbox::rcx() const
 {
-	return context_.rcx;
+	return context_.base.rcx;
 }
 std::uint64_t cpu_virtualbox::rdx() const
 {
-	return context_.rdx;
+	return context_.base.rdx;
 }
 
 std::uint64_t cpu_virtualbox::rsp() const
 {
-	return context_.rsp;
+	return context_.base.rsp;
 }
 std::uint64_t cpu_virtualbox::rbp() const
 {
-	return context_.rbp;
+	return context_.base.rbp;
 }
 std::uint64_t cpu_virtualbox::rsi() const
 {
-	return context_.rsi;
+	return context_.base.rsi;
 }
 std::uint64_t cpu_virtualbox::rdi() const
 {
-	return context_.rdi;
+	return context_.base.rdi;
 }
 
 std::uint64_t cpu_virtualbox::r8() const {
-	return context_.r8;
+	return context_.base.r8;
 }
 std::uint64_t cpu_virtualbox::r9() const {
-	return context_.r9;
+	return context_.base.r9;
 }
 std::uint64_t cpu_virtualbox::r10() const {
-	return context_.r10;
+	return context_.base.r10;
 }
 std::uint64_t cpu_virtualbox::r11() const {
-	return context_.r11;
+	return context_.base.r11;
 }
 std::uint64_t cpu_virtualbox::r12() const {
-	return context_.r12;
+	return context_.base.r12;
 }
 std::uint64_t cpu_virtualbox::r13() const {
-	return context_.r13;
+	return context_.base.r13;
 }
 std::uint64_t cpu_virtualbox::r14() const {
-	return context_.r14;
+	return context_.base.r14;
 }
 std::uint64_t cpu_virtualbox::r15() const {
-	return context_.r15;
+	return context_.base.r15;
 }
 
 std::uint64_t cpu_virtualbox::cr0() const
 {
-	return context_.cr0;
+	return context_.base.cr0;
 }
 std::uint64_t cpu_virtualbox::cr2() const
 {
-	return context_.cr2;
+	return context_.base.cr2;
 }
 std::uint64_t cpu_virtualbox::cr3() const
 {
-	return context_.cr3;
+	return context_.base.cr3;
 }
 std::uint64_t cpu_virtualbox::cr4() const
 {
-	return context_.cr4;
+	return context_.base.cr4;
 }
 std::uint64_t cpu_virtualbox::cr8() const
 {
@@ -419,16 +419,16 @@ std::uint64_t cpu_virtualbox::cr8() const
 
 std::uint64_t cpu_virtualbox::rip() const
 {
-	return context_.rip;
+	return context_.base.rip;
 }
 
 #define GENERATE_DESCRIPTOR_FUNCTIONS(name)					\
 	std::uint64_t cpu_virtualbox::name##_base() const {		\
-		return context_.name.uAddr; 						\
+		return context_.base.name.uAddr; 						\
 	} 														\
  															\
 	std::uint32_t cpu_virtualbox::name##_limit() const {	\
-		return context_.name.cb; 							\
+		return context_.base.name.cb; 							\
 	}
 
 GENERATE_DESCRIPTOR_FUNCTIONS(gdtr)
@@ -438,51 +438,51 @@ GENERATE_DESCRIPTOR_FUNCTIONS(idtr)
 
 #define GENERATE_SELECTOR_FUNCTIONS(name)					\
 	std::uint16_t cpu_virtualbox::name() const {			\
-		return context_.name.uSel;							\
+		return context_.base.name.uSel;							\
 	}														\
 															\
 	std::uint64_t cpu_virtualbox::name##_base() const {		\
-		return context_.name.uBase;							\
+		return context_.base.name.uBase;							\
 	}														\
 															\
 	std::uint32_t cpu_virtualbox::name##_limit() const {	\
-		return context_.name.uLimit;						\
+		return context_.base.name.uLimit;						\
 	}														\
 															\
 	std::uint32_t cpu_virtualbox::name##_attr() const {		\
-		return context_.name.uAttr;							\
+		return context_.base.name.uAttr;							\
 	}														\
 															\
 	std::uint8_t cpu_virtualbox::name##_attr_type() const {	\
-		return context_.name.attr.u4Type;					\
+		return context_.base.name.attr.u4Type;					\
 	}														\
 															\
 	bool cpu_virtualbox::name##_attr_desc_type() const {	\
-		return context_.name.attr.u1DescType;				\
+		return context_.base.name.attr.u1DescType;				\
 	}														\
 															\
 	std::uint8_t cpu_virtualbox::name##_attr_dpl() const {	\
-		return context_.name.attr.u2Dpl;					\
+		return context_.base.name.attr.u2Dpl;					\
 	}														\
 															\
 	bool cpu_virtualbox::name##_attr_present() const {		\
-		return context_.name.attr.u1Present;				\
+		return context_.base.name.attr.u1Present;				\
 	}														\
 															\
 	bool cpu_virtualbox::name##_attr_available() const {	\
-		return context_.name.attr.u1Available;				\
+		return context_.base.name.attr.u1Available;				\
 	}														\
 															\
 	bool cpu_virtualbox::name##_attr_long() const {			\
-		return context_.name.attr.u1Long;					\
+		return context_.base.name.attr.u1Long;					\
 	}														\
 															\
 	bool cpu_virtualbox::name##_attr_def_big() const {		\
-		return context_.name.attr.u1DefBig;					\
+		return context_.base.name.attr.u1DefBig;					\
 	}														\
 															\
 	bool cpu_virtualbox::name##_attr_granularity() const {	\
-		return context_.name.attr.u1Granularity;			\
+		return context_.base.name.attr.u1Granularity;			\
 	}
 
 GENERATE_SELECTOR_FUNCTIONS(ldtr)
@@ -499,19 +499,19 @@ GENERATE_SELECTOR_FUNCTIONS(es)
 
 std::uint64_t cpu_virtualbox::sysenter_eip_r0() const
 {
-	return context_.sysenter.eip;
+	return context_.base.sysenter.eip;
 }
 std::uint64_t cpu_virtualbox::sysenter_esp_r0() const
 {
-	return context_.sysenter.esp;
+	return context_.base.sysenter.esp;
 }
 std::uint64_t cpu_virtualbox::sysenter_ss_r0() const
 {
-	return (context_.sysenter.cs & 0xFF) + 8;
+	return (context_.base.sysenter.cs & 0xFF) + 8;
 }
 std::uint64_t cpu_virtualbox::sysenter_cs_r0() const
 {
-	return context_.sysenter.cs & 0xFF;
+	return context_.base.sysenter.cs & 0xFF;
 }
 
 std::uint16_t cpu_virtualbox::cs_r3() const
@@ -529,41 +529,42 @@ std::uint16_t cpu_virtualbox::ds_r3() const
 
 std::uint64_t cpu_virtualbox::dr(std::uint8_t reg) const
 {
-	return reg < sizeof(context_.dr) / sizeof(*context_.dr) ? context_.dr[reg] : 0;
+	return reg < sizeof(context_.base.dr) / sizeof(*context_.base.dr) ? context_.base.dr[reg] : 0;
 }
 
 
 std::uint64_t cpu_virtualbox::msrEFER() const
 {
-	return (context_.msrEFER);
+	return (context_.base.msrEFER);
 }
 std::uint64_t cpu_virtualbox::msrSTAR() const
 {
-	return (context_.msrSTAR);
+	return (context_.base.msrSTAR);
 }
 std::uint64_t cpu_virtualbox::msrPAT() const
 {
-	return (context_.msrPAT);
+	return (context_.base.msrPAT);
 }
 std::uint64_t cpu_virtualbox::msrLSTAR() const
 {
-	return (context_.msrLSTAR);
+	return (context_.base.msrLSTAR);
 }
 std::uint64_t cpu_virtualbox::msrCSTAR() const
 {
-	return (context_.msrCSTAR);
+	return (context_.base.msrCSTAR);
 }
 std::uint64_t cpu_virtualbox::msrSFMASK() const
 {
-	return (context_.msrSFMASK);
+	return (context_.base.msrSFMASK);
 }
 std::uint64_t cpu_virtualbox::msrKernelGSBase() const
 {
-	return (context_.msrKernelGSBase);
+	return (context_.base.msrKernelGSBase);
 }
 std::uint64_t cpu_virtualbox::msrApicBase() const
 {
-	return (context_.msrApicBase);
+	return (context_.base.msrApicBase);
+}
 }
 }
 } // namespace reven::vmghost
