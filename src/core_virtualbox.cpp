@@ -33,8 +33,8 @@ void core_virtualbox::read_descriptor(std::uint64_t file_offset) {
 		throw std::runtime_error("Unsupported core format.");
 	}
 
-	if (descriptor_.u32FmtVersion < vbox::DBGFCORE_FMT_VERSION_COMPAT or
-	    descriptor_.u32FmtVersion > vbox::DBGFCORE_FMT_VERSION) {
+	if (descriptor_.u32FmtVersion < vbox::DBGFCORE_FMT_VERSION_COMPAT ||
+	    descriptor_.u32FmtVersion > vbox::DBGFCORE_FMT_VERSIONv6) {
 		throw std::runtime_error("Unsupported core version.");
 	}
 
@@ -52,6 +52,7 @@ void core_virtualbox::read_cpu(std::uint8_t cpu_nb, std::uint64_t file_offset) {
 	file_->read(reinterpret_cast<char*>(&context), sizeof(context));
 
 	cpus_[cpu_nb].set_context(context);
+	cpus_[cpu_nb].set_version(descriptor_.u32FmtVersion);
 }
 
 void core_virtualbox::read_tetrane_cpu(std::uint8_t cpu_nb, std::uint64_t file_offset) {

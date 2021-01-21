@@ -9,14 +9,20 @@ class cpu_virtualbox {
 public:
 	cpu_virtualbox() = default;
 
-	explicit cpu_virtualbox(vbox5::DBGFCORECPU context)
-		: context_(context) {}
+	explicit cpu_virtualbox(std::uint32_t version, vbox::DBGFCORECPU context)
+		: version_(version)
+		, context_(context) {}
 
 	cpu_virtualbox(cpu_virtualbox&& rhs) = default;
 	~cpu_virtualbox() = default;
 
+
+	// The version of the passed context should be the same as version(), otherwise the behavior is undefined.
 	inline void set_context(const vbox::DBGFCORECPU& context) { context_ = context; }
 	inline void set_tetrane_context(const tetrane_cpu_info& tetrane_context) { tetrane_context_ = tetrane_context; }
+
+	inline void set_version(std::uint32_t version) { version_ = version; }
+	inline std::uint32_t version() const { return version_; }
 
 	//! @name Paging features
 	//! @{
@@ -237,6 +243,7 @@ public:
 private:
 	std::uint16_t fpu_rebuild_tag_word() const;
 
+	std::uint32_t version_;
 	vbox::DBGFCORECPU context_;
 	tetrane_cpu_info tetrane_context_;
 

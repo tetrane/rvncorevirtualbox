@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <type_traits>
 
 namespace reven {
 namespace vmghost {
@@ -16,7 +17,8 @@ static constexpr auto DBGFCORE_MAGIC = 0xc01ac0de;
 /** DBGCORECOREDESCRIPTOR::u32FmtVersion. */
 // for some unknown reason, oracle bumped the version twice
 static constexpr auto DBGFCORE_FMT_VERSION_COMPAT = 0x00010004;
-static constexpr auto DBGFCORE_FMT_VERSION = 0x00010005;
+static constexpr auto DBGFCORE_FMT_VERSIONv5 = 0x00010005;
+static constexpr auto DBGFCORE_FMT_VERSIONv6 = 0x00010006;
 
 static constexpr auto TETRANE_CPU_SECTION_NOTE_TYPE = 0xbeef;
 static constexpr auto TETRANE_SECTION_MAGIC = 0x62647570634e5652;
@@ -223,7 +225,7 @@ typedef struct DBGFCOREXDTR {
  * Please bump DBGFCORE_FMT_VERSION by 1 if you make any changes to this
  * structure.
  */
-typedef struct DBGFCORECPU {
+struct DBGFCORE_base {
 	std::uint64_t rax;
 	std::uint64_t rbx;
 	std::uint64_t rcx;
@@ -270,11 +272,51 @@ typedef struct DBGFCORECPU {
 	std::uint64_t msrSFMASK;
 	std::uint64_t msrKernelGSBase;
 	std::uint64_t msrApicBase;
+};
+
+typedef struct DBGFCORECPUv5 {
+	DBGFCORE_base base;
 	std::uint64_t aXcr[2];
 	X86XSAVEAREA ext;
-} DBGFCORECPU;
+} DBGFCORECPUv5;
 
+typedef struct DBGFCORECPUv6 {
+	DBGFCORE_base base;
+	std::uint64_t msrTscAux;
+	std::uint64_t aXcr[2];
+	X86XSAVEAREA ext;
+} DBGFCORECPUv6;
+
+/// Allows to abstract over which variant of the core is accessed.
+///
+/// > If two union members are standard-layout types, it's well-defined to examine their common subsequence on
+/// > any compiler.
+/// -- https://en.cppreference.com/w/cpp/language/union
+///
+/// Therefore, even if we put a v6 in a DBGFCORECPU, it is legal to access v6.base.rip through base.rip.
+struct DBGFCORECPU {
+	union {
+		DBGFCORE_base base;
+		DBGFCORECPUv5 v5;
+		DBGFCORECPUv6 v6;
+	};
+};
+
+static_assert(sizeof(DBGFCORECPUv5) == 8768, "Invalid DBGFCORECPU size");
+static_assert(sizeof(DBGFCORECPUv6) == 8768, "Invalid DBGFCORECPU size");
 static_assert(sizeof(DBGFCORECPU) == 8768, "Invalid DBGFCORECPU size");
+
+
+static_assert(std::is_standard_layout<DBGFCORE_base>::value,
+              "A standard layout is required for _base for union access with common subsequence");
+
+
+static_assert(std::is_standard_layout<DBGFCORECPUv5>::value,
+              "A standard layout is required for v5 for union access with common subsequence");
+
+
+static_assert(std::is_standard_layout<DBGFCORECPUv6>::value,
+              "A standard layout is required for v6 for union access with common subsequence");
 
 /**
  * The DBGF Core descriptor.
