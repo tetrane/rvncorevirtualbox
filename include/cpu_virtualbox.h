@@ -15,7 +15,7 @@ public:
 	cpu_virtualbox(cpu_virtualbox&& rhs) = default;
 	~cpu_virtualbox() = default;
 
-	inline void set_context(const vbox5::DBGFCORECPU& context) { context_ = context; }
+	inline void set_context(const vbox::DBGFCORECPU& context) { context_ = context; }
 	inline void set_tetrane_context(const tetrane_cpu_info& tetrane_context) { tetrane_context_ = tetrane_context; }
 
 	//! @name Paging features
@@ -237,7 +237,7 @@ public:
 private:
 	std::uint16_t fpu_rebuild_tag_word() const;
 
-	vbox5::DBGFCORECPU context_;
+	vbox::DBGFCORECPU context_;
 	tetrane_cpu_info tetrane_context_;
 
 }; // class cpu_virtualbox

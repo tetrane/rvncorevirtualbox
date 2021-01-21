@@ -75,7 +75,7 @@ private:
 	std::shared_ptr<std::ifstream> file_;
 
 	//! The description of the loaded core.
-	vbox5::DBGFCOREDESCRIPTOR descriptor_;
+	vbox::DBGFCOREDESCRIPTOR descriptor_;
 
 	//! Vector of CPU data.
 	cpu_vector cpus_;

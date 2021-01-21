@@ -8,7 +8,7 @@ typedef struct tetrane_cpu_info {
 	std::uint64_t cr8{0x0};
 } __attribute__((packed)) tetrane_cpu_info;
 
-namespace vbox5 {
+namespace vbox {
 
 /** DBGCORECOREDESCRIPTOR::u32Magic. */
 static constexpr auto DBGFCORE_MAGIC = 0xc01ac0de;
@@ -309,4 +309,4 @@ static constexpr auto NN_VBOXCORE = "VBCORE";
 static constexpr auto NN_VBOXCPU = "VBCPU";
 }
 }
-} // namespace reven::vmghost::vbox5
+} // namespace reven::vmghost::vbox

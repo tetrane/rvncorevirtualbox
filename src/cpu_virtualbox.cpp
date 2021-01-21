@@ -7,7 +7,7 @@ namespace vmghost {
 
 namespace {
 
-std::uint16_t fpu_get_top(const vbox5::X86FXSTATE* p_fpu)
+std::uint16_t fpu_get_top(const vbox::X86FXSTATE* p_fpu)
 {
 	return (p_fpu->FSW >> 11) & 0x7;
 }
@@ -17,7 +17,7 @@ unsigned int fpu_st_index_for_r(unsigned int i_reg, std::uint16_t top)
 	return (i_reg - top) & 0x7;
 }
 
-std::uint16_t fpu_restore_tag(const vbox5::X86FXSTATE* pFpu, unsigned int iReg)
+std::uint16_t fpu_restore_tag(const vbox::X86FXSTATE* pFpu, unsigned int iReg)
 {
 	// source: cpumR3RegCalcFpuTagFromFxSave
 	// moded to match fpu ri registers to sti in vbox fpu state

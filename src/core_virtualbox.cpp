@@ -22,19 +22,19 @@ core_virtualbox::core_virtualbox() : file_(new std::ifstream), memory_(new Memor
 core_virtualbox::~core_virtualbox() = default;
 
 void core_virtualbox::read_descriptor(std::uint64_t file_offset) {
-	static_assert(std::is_trivially_copyable<vbox5::DBGFCOREDESCRIPTOR>::value,
+	static_assert(std::is_trivially_copyable<vbox::DBGFCOREDESCRIPTOR>::value,
 	              "CoreDescription is not trivially copyable.");
 
 	file_->seekg(file_offset);
 	file_->read(reinterpret_cast<char*>(&descriptor_), sizeof(descriptor_));
 
 	// Perform basic sanity checking on core descriptor.
-	if (descriptor_.u32Magic != vbox5::DBGFCORE_MAGIC) {
+	if (descriptor_.u32Magic != vbox::DBGFCORE_MAGIC) {
 		throw std::runtime_error("Unsupported core format.");
 	}
 
-	if (descriptor_.u32FmtVersion < vbox5::DBGFCORE_FMT_VERSION_COMPAT or
-	    descriptor_.u32FmtVersion > vbox5::DBGFCORE_FMT_VERSION) {
+	if (descriptor_.u32FmtVersion < vbox::DBGFCORE_FMT_VERSION_COMPAT or
+	    descriptor_.u32FmtVersion > vbox::DBGFCORE_FMT_VERSION) {
 		throw std::runtime_error("Unsupported core version.");
 	}
 
@@ -46,7 +46,7 @@ void core_virtualbox::read_cpu(std::uint8_t cpu_nb, std::uint64_t file_offset) {
 		throw std::runtime_error("More cpu than expected");
 	}
 
-	vbox5::DBGFCORECPU context;
+	vbox::DBGFCORECPU context;
 
 	file_->seekg(file_offset);
 	file_->read(reinterpret_cast<char*>(&context), sizeof(context));
@@ -67,7 +67,7 @@ void core_virtualbox::read_tetrane_cpu(std::uint8_t cpu_nb, std::uint64_t file_o
 
 	file_->read(reinterpret_cast<char*>(&magic), sizeof(magic));
 
-	if (magic != vbox5::TETRANE_SECTION_MAGIC) {
+	if (magic != vbox::TETRANE_SECTION_MAGIC) {
 		throw std::runtime_error("Bad magic for tetrane cpu section.");
 	}
 
@@ -124,12 +124,12 @@ void core_virtualbox::parse(std::string const& filepath)
 
 				const std::uint64_t desc_offset = phdr.p_offset + note_offset + sizeof(note) + ALIGN_UP(note.n_namesz, 4);
 
-				if (note.n_type == vbox5::NT_VBOXCORE) {
+				if (note.n_type == vbox::NT_VBOXCORE) {
 					read_descriptor(desc_offset);
-				} else if (note.n_type == vbox5::NT_VBOXCPU) {
+				} else if (note.n_type == vbox::NT_VBOXCPU) {
 					read_cpu(cpu_counter, desc_offset);
 					++cpu_counter;
-				} else if (note.n_type == vbox5::TETRANE_CPU_SECTION_NOTE_TYPE) {
+				} else if (note.n_type == vbox::TETRANE_CPU_SECTION_NOTE_TYPE) {
 					read_tetrane_cpu(tetrane_cpu_counter, desc_offset);
 					++tetrane_cpu_counter;
 				}
