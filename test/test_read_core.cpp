@@ -47,6 +47,27 @@ BOOST_AUTO_TEST_CASE(ReadCore)
 	}
 }
 
+BOOST_AUTO_TEST_CASE(ReadBaseV5)
+{
+	int80_core vm;
+
+	BOOST_CHECK_EQUAL(vm.cpu_count(), 1);
+
+	for (auto cpu = vm.cpu_begin(); cpu != vm.cpu_end(); ++cpu) {
+		// all values come from running the test on commit ae6d6174cb230a22bcb11084e0ff6c00044c568c
+
+		// Check value in the base prefix
+		BOOST_CHECK_EQUAL(cpu->rip(), 0xb7fdbe20);
+		// Check value outside the base prefix
+		BOOST_CHECK_EQUAL(cpu->fpu_status_word(), 0x4220);
+		BOOST_CHECK_EQUAL(cpu->mxcsr(), 0x1f80);
+
+		BOOST_CHECK_EQUAL(cpu->version(), reven::vmghost::vbox::DBGFCORE_FMT_VERSION_COMPAT);
+		// Cannot check msrTscAux in v5 or below
+		BOOST_CHECK_THROW(cpu->msrTscAux(), std::runtime_error);
+	}
+}
+
 BOOST_AUTO_TEST_CASE(ReadNonExistingCore)
 {
 	reven::vmghost::core_virtualbox core;
